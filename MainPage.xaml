@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ConverterCurrency.MainPage"
+             xmlns:models="clr-namespace:ConverterCurrency.Model"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:viewmodel="clr-namespace:ConverterCurrency.ViewModel"
+             x:Name="ThisPage"
+             Title="ConverterCurrency">
+
+    <VerticalStackLayout Spacing="20" Padding="20">
+        <VerticalStackLayout Spacing="10" HorizontalOptions="End">
+            <Label Text="Дата:" FontSize="15"/>
+            <DatePicker Date="{Binding SelectedDate}"
+                        MaximumDate="{x:Static sys:DateTime.Today}"
+                        MinimumDate="01/01/2000"
+                        Format="dd.MM.yyyy"/>
+        </VerticalStackLayout>
+        
+        <ActivityIndicator IsRunning="{Binding IsBusy}"
+                   IsVisible="{Binding IsBusy}"
+                   HorizontalOptions="Center"/>
+        
+        <Label Text="Сумма для конвертации:" FontSize="15"/>
+        <Entry Keyboard="Numeric" Text="{Binding Amount}" Placeholder="Введите число..."/>
+        <Label Text="Из валюты:" FontSize="15"/>
+        <Picker ItemsSource="{Binding FilteredCurrencies}" SelectedItem="{Binding SelectedFromCurrency}" ItemDisplayBinding="{Binding CharCode}"/>
+        <Label Text="{Binding SelectedFromCurrency.Name}">
+            <Label.Triggers>
+                <DataTrigger TargetType="Label" Binding="{Binding SelectedFromCurrency}" Value="{x:Null}">
+                    <Setter Property="IsVisible" Value="False"/>
+                </DataTrigger>
+            </Label.Triggers>
+        </Label>
+        <Label>
+            <Label.Triggers>
+                <DataTrigger TargetType="Label" Binding="{Binding SelectedFromCurrency}" Value="{x:Null}">
+                    <Setter Property="IsVisible" Value="False"/>
+                </DataTrigger>
+            </Label.Triggers>
+        </Label>
+
+            <Label Text="В валюту:"  FontSize="15"/>
+
+            <Picker ItemsSource="{Binding FilteredCurrencies}" SelectedItem="{Binding SelectedToCurrency}" ItemDisplayBinding="{Binding CharCode}"/>
+
+            <Label Text="{Binding SelectedToCurrency.Name}">
+                <Label.Triggers>
+                    <DataTrigger TargetType="Label" Binding="{Binding SelectedToCurrency}" Value="{x:Null}">
+                        <Setter Property="IsVisible" Value="False"/>
+                    </DataTrigger>
+                </Label.Triggers>
+            </Label>
+
+        <Label>
+            <Label.Triggers>
+                <DataTrigger TargetType="Label" Binding="{Binding SelectedToCurrency}" Value="{x:Null}">
+                    <Setter Property="IsVisible" Value="False"/>
+                </DataTrigger>
+            </Label.Triggers>
+        </Label>
+
+        <VerticalStackLayout Spacing="10" HorizontalOptions="Center">
+            <Label Text="Результат:" FontSize="15"/>
+
+            <Label Text="{Binding ConvertedAmount}" FontSize="Large" FontAttributes="Bold"/>
+
+            <Label Text="{Binding SelectedToCurrency.CharCode}">
+                <Label.Triggers>
+                    <DataTrigger TargetType="Label" Binding="{Binding SelectedToCurrency}" Value="{x:Null}">
+                        <Setter Property="IsVisible" Value="False"/>
+                    </DataTrigger>
+                </Label.Triggers>
+            </Label>
+        </VerticalStackLayout>
+    </VerticalStackLayout>
+
+</ContentPage>
