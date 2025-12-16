@@ -123,6 +123,14 @@ namespace ConverterCurrency.ViewModel
         private async void LoadAvailableCurrenciesAsync()
         {
             IsBusy = true;
+            string tempFromCurrency = string.Empty;
+            string temptoCurrency = string.Empty;
+            if (SelectedFromCurrency != null && SelectedToCurrency != null)
+            {
+                tempFromCurrency = SelectedFromCurrency.CharCode;
+                temptoCurrency = SelectedToCurrency.CharCode;
+            }
+
             try
             {
                 _currentRates = await _dataser.GetCurrencyRatesAsync(SelectedDate);
@@ -130,16 +138,15 @@ namespace ConverterCurrency.ViewModel
                 if (_currentRates?.Valutes != null)
                 {
                     Currencies.Clear();
-
+                    FilteredCurrencies.Clear();
                     foreach (var currency in _currentRates.Valutes.Values.OrderBy(c => c.CharCode))
                     {
                         Currencies.Add(currency);
-                        if (!FilteredCurrencies.Contains(currency))
-                        {
-                            FilteredCurrencies.Add(currency);
-                        }
+                        FilteredCurrencies.Add(currency);
                     }
                 }
+                SelectedFromCurrency = Currencies.FirstOrDefault(c => c.CharCode == tempFromCurrency);
+                SelectedToCurrency = Currencies.FirstOrDefault(c => c.CharCode == temptoCurrency);
             }
             catch (Exception ex)
             {

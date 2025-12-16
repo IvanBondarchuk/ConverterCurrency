@@ -33,6 +33,7 @@ namespace ConverterCurrency.Data
                 var response = await new HttpClient().GetStringAsync(url);
                 var currencyResponse = JsonSerializer.Deserialize<ExchangeRatesResponse>(response);
 
+
                 if (currencyResponse != null)
                 {
                     currencyResponse.Valutes["RUB"] = new Currency
@@ -42,16 +43,26 @@ namespace ConverterCurrency.Data
                         CharCode = "RUB",
                         Nominal = 1,
                         Name = "Российский рубль",
-                        Value = 1,
+                        Value = 1
                     };
+
                     _cache[date.Date] = currencyResponse;
                 }
+
                 return currencyResponse;
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                return null;
+                int retries = 0;
+                do
+                {
+                    retries++;
+                    date = date.AddDays(-1);
+                    return await GetCurrencyRatesAsync(date);
+                } while (retries < 31);
+
+                // Если достигнут предел, выбросить исключение вверх по стеку
+                throw new Exception($"Не удалось получить данные за период нескольких дней назад", ex);
             }
         }
 
@@ -59,7 +70,7 @@ namespace ConverterCurrency.Data
         {
             if (fromCurrency == null || toCurrency == null)
                 return 0;
-            var convertedAmount = (amount * (fromCurrency.Value / fromCurrency.Nominal)) / (toCurrency.Value / toCurrency.Nominal);
+            var convertedAmount = amount * (fromCurrency.Value / fromCurrency.Nominal) / (toCurrency.Value / toCurrency.Nominal);
 
             return Math.Round(convertedAmount, 2);
         }
