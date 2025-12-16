@@ -63,7 +63,7 @@
         <VerticalStackLayout Spacing="10" HorizontalOptions="Center">
             <Label Text="Результат:" FontSize="15"/>
 
-            <Label Text="{Binding ConvertedAmount}" FontSize="Large" FontAttributes="Bold"/>
+            <Label Text="{Binding ConvertedAmount}" FontSize="Large"/>
 
             <Label Text="{Binding SelectedToCurrency.CharCode}">
                 <Label.Triggers>
