@@ -1,4 +1,5 @@
 ﻿using ConverterCurrency.Model;
+using ConverterCurrency.ViewModel;
 using System;
 using System.Diagnostics;
 using System.Net.Http;
@@ -48,7 +49,6 @@ namespace ConverterCurrency.Data
 
                     _cache[date.Date] = currencyResponse;
                 }
-
                 return currencyResponse;
             }
             catch (Exception ex)
@@ -58,7 +58,8 @@ namespace ConverterCurrency.Data
                 {
                     retries++;
                     date = date.AddDays(-1);
-                    return await GetCurrencyRatesAsync(date);
+                    _cache[date.Date.AddDays(1)] = await GetCurrencyRatesAsync(date);
+                    return _cache[date.Date.AddDays(1)];
                 } while (retries < 31);
 
                 // Если достигнут предел, выбросить исключение вверх по стеку

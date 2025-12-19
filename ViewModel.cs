@@ -10,16 +10,17 @@ namespace ConverterCurrency.ViewModel
     public abstract class BaseViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler? PropertyChanged;
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-    public class MainViewModel : BaseViewModel
+    internal class MainViewModel : BaseViewModel
     {
         private readonly DataSer _dataser;
         private ExchangeRatesResponse? _currentRates;
         private DateTime _selectedDate = DateTime.Today;
+        private DateTime _foundedDate = DateTime.Today;
         private Currency? _selectedFromCurrency;
         private Currency? _selectedToCurrency;
         private double _amount;
@@ -27,9 +28,7 @@ namespace ConverterCurrency.ViewModel
 
         private bool _isBusy;
 
-        public event PropertyChangedEventHandler? PropertyChanged;
         public ObservableCollection<Currency> Currencies { get; } = new();
-        public ObservableCollection<Currency> FilteredCurrencies { get; } = new();
 
 
         public bool IsBusy
@@ -114,6 +113,19 @@ namespace ConverterCurrency.ViewModel
             }
         }
 
+        public DateTime FoundedDate
+        {
+            get => _foundedDate;
+            set
+            {
+                if (_foundedDate != value)
+                {
+                    _foundedDate = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         public MainViewModel()
         {
             _dataser = new DataSer();
@@ -123,8 +135,8 @@ namespace ConverterCurrency.ViewModel
         private async void LoadAvailableCurrenciesAsync()
         {
             IsBusy = true;
-            string tempFromCurrency = string.Empty;
-            string temptoCurrency = string.Empty;
+            string? tempFromCurrency = string.Empty;
+            string? temptoCurrency = string.Empty;
             if (SelectedFromCurrency != null && SelectedToCurrency != null)
             {
                 tempFromCurrency = SelectedFromCurrency.CharCode;
@@ -138,15 +150,14 @@ namespace ConverterCurrency.ViewModel
                 if (_currentRates?.Valutes != null)
                 {
                     Currencies.Clear();
-                    FilteredCurrencies.Clear();
                     foreach (var currency in _currentRates.Valutes.Values.OrderBy(c => c.CharCode))
                     {
                         Currencies.Add(currency);
-                        FilteredCurrencies.Add(currency);
                     }
                 }
                 SelectedFromCurrency = Currencies.FirstOrDefault(c => c.CharCode == tempFromCurrency);
                 SelectedToCurrency = Currencies.FirstOrDefault(c => c.CharCode == temptoCurrency);
+                FoundedDate = _currentRates.Date;
             }
             catch (Exception ex)
             {

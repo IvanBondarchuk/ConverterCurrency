@@ -10,15 +10,15 @@ namespace ConverterCurrency.Model
     public class Currency
     {
         [JsonPropertyName("ID")]
-        public string ID { get; set; }
+        public string? ID { get; set; }
         [JsonPropertyName("NumCode")]
-        public string NumCode { get; set; }
+        public string? NumCode { get; set; }
         [JsonPropertyName("CharCode")]
-        public string CharCode { get; set; }
+        public string? CharCode { get; set; }
         [JsonPropertyName("Nominal")]
         public double Nominal { get; set; }
         [JsonPropertyName("Name")]
-        public string Name { get; set; }
+        public string? Name { get; set; }
         [JsonPropertyName("Value")]
         public double Value { get; set; }
     }
